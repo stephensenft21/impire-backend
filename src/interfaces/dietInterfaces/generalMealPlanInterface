@@ -1,0 +1,33 @@
+// backend/interfaces/generalMealPlanInterface.ts
+import { MealPlan } from "../mealPlanInterface";
+import { KetoDietMealPlan } from "./ketoDietInterface";
+import { VeganDietMealPlan } from "./veganDietInterface";
+import { MediterraneanDietMealPlan } from "./mediterraneanDietInterface";
+import { LowCarbDietMealPlan } from "./lowCarbDietInterface";
+import { HighProteinDietMealPlan } from "./highProteinDietInterface";
+import { GlutenFreeDietMealPlan } from "./glutenFreeDietInterface";
+import { IntermittentFastingMealPlan } from "./intermittentFastingInterface";
+import { Whole30DietMealPlan } from "./whole30DietInterface";
+import { RawFoodDietMealPlan } from "./rawFoodDietInterface";
+import { CleanEatingDietMealPlan } from "./cleanEatingDietInterface";
+import { PescatarianDietMealPlan } from "./pescatarianDietInterface";
+import { FodmapDietMealPlan } from "./fodmapDietInterface";
+import { DiabeticDietMealPlan } from "./diabeticDietInterface";
+import { AthleteDietMealPlan } from "./athleteDietInterface";
+
+export type GeneralMealPlan =
+  | MealPlan
+  | KetoDietMealPlan
+  | VeganDietMealPlan
+  | MediterraneanDietMealPlan
+  | LowCarbDietMealPlan
+  | HighProteinDietMealPlan
+  | GlutenFreeDietMealPlan
+  | IntermittentFastingMealPlan
+  | Whole30DietMealPlan
+  | RawFoodDietMealPlan
+  | CleanEatingDietMealPlan
+  | PescatarianDietMealPlan
+  | FodmapDietMealPlan
+  | DiabeticDietMealPlan
+  | AthleteDietMealPlan;

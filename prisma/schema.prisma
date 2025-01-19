@@ -1,0 +1,376 @@
+datasource db {
+  provider = "postgresql"  // or your database provider, e.g., "mysql", "sqlite"
+  url      = env("DATABASE_URL")  // This will read the DATABASE_URL from your .env file
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                Int                     @id @default(autoincrement())
+  username          String                  @unique
+  email             String                  @unique
+  passwordHash      String                  @map("password_hash")
+  createdAt         DateTime                @default(now()) @map("created_at")
+  profile           Profile?
+  checkIns          CheckIn[]
+  mealPlans         MealPlan[]
+  transformations   ClientTransformation[]
+  ratings           Rating[]
+  feedbacks         Feedback[]
+  loginLogs         LoginLog[]
+  orders            Order[]
+  questions         QuestionComment[]
+  carts             Cart[]
+  ketoDietMealPlans         KetoDietMealPlan[]
+  veganDietMealPlans        VeganDietMealPlan[]
+  mediterraneanDietMealPlans MediterraneanDietMealPlan[]
+  lowCarbDietMealPlans     LowCarbDietMealPlan[]
+  highProteinDietMealPlans HighProteinDietMealPlan[]
+  glutenFreeDietMealPlans  GlutenFreeDietMealPlan[]
+  intermittentFastingMealPlans IntermittentFastingMealPlan[]
+  whole30DietMealPlans     Whole30DietMealPlan[]
+  rawFoodDietMealPlans     RawFoodDietMealPlan[]
+  cleanEatingDietMealPlans CleanEatingDietMealPlan[]
+  pescatarianDietMealPlans PescatarianDietMealPlan[]
+  fodmapDietMealPlans      FodmapDietMealPlan[]
+  diabeticDietMealPlans    DiabeticDietMealPlan[]
+  athleteDietMealPlans    AthleteDietMealPlan[]
+}
+
+
+model Profile {
+  id        Int    @id @default(autoincrement())
+  userId    Int    @unique @map("user_id")
+  bio       String?
+  avatarUrl String? @map("avatar_url")
+  user      User   @relation(fields: [userId], references: [id])
+}
+
+model CheckIn {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  checkinDate  DateTime @map("checkin_date")
+  weight       Float?
+  measurements String?
+  photoUrl     String? @map("photo_url")
+  user         User    @relation(fields: [userId], references: [id])
+}
+
+model MealPlan {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  planName    String    @map("plan_name")
+  description String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model ClientTransformation {
+  id                Int       @id @default(autoincrement())
+  userId            Int
+  beforePhotoUrl    String?   @map("before_photo_url")
+  afterPhotoUrl     String?   @map("after_photo_url")
+  description       String?
+  transformationDate DateTime @map("transformation_date")
+  user              User      @relation(fields: [userId], references: [id])
+}
+
+model Program {
+  id             Int       @id @default(autoincrement())
+  programName    String    @map("program_name")
+  description    String?
+  difficultyLevel String?  @map("difficulty_level")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  ratings        Rating[]
+}
+
+model Rating {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  programId    Int
+  rating       Int
+  comment      String?
+  createdAt    DateTime  @default(now()) @map("created_at")
+  user         User      @relation(fields: [userId], references: [id])
+  program      Program   @relation(fields: [programId], references: [id])
+}
+
+model QuestionComment {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  question    String
+  response    String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  user        User      @relation(fields: [userId], references: [id])
+}
+
+model About {
+  id        Int      @id @default(autoincrement())
+  content   String
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
+
+model Training {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  duration    Int
+  level       String
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now()) @map("created_at")
+}
+
+model Feedback {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  feedback  String
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Merch {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float    @map("price")
+  stock       Int
+  imageUrl    String?  @map("image_url")
+}
+
+model LoginLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  loginTime DateTime @default(now()) @map("login_time")
+  ipAddress String   @map("ip_address")
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Order {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  status          String   @default("pending")
+  totalAmount     Float    @map("total_amount")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @map("updated_at")
+  stripePaymentId String?  @map("stripe_payment_id")
+  user            User     @relation(fields: [userId], references: [id])
+  items           OrderItem[]
+  payment         Payment?
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  price     Float    @map("price")
+  order     Order    @relation(fields: [orderId], references: [id])
+}
+
+model Payment {
+  id             Int      @id @default(autoincrement())
+  orderId        Int     @unique   // Add @unique here
+  stripePaymentId String  @unique @map("stripe_payment_id")
+  paymentStatus  String   @default("pending") @map("payment_status")
+  amount         Float    @map("amount")
+  paymentDate    DateTime @default(now()) @map("payment_date")
+  order          Order    @relation(fields: [orderId], references: [id])
+}
+
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  quantity  Int
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model KetoDietMealPlan {
+  id Int        @id @default(autoincrement())
+  userId Int
+  planName String
+  targetCarbs Float
+  targetFat Float
+  targetProtein Float
+  isLowCarbFriendly Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model VeganDietMealPlan {
+  id Int        @id @default(autoincrement())
+  userId Int
+  planName String
+  isPlantBased Boolean
+  avoidAnimalProducts Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model MediterraneanDietMealPlan {
+  id Int        @id @default(autoincrement())
+  userId Int
+  planName String
+  includesOliveOil Boolean
+  includesFish Boolean
+  includesWholeGrains Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model LowCarbDietMealPlan {
+  id Int        @id @default(autoincrement())
+  userId Int
+  planName String
+  maxCarbIntake Float
+  includesHighFat Boolean
+  proteinFocus Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model HighProteinDietMealPlan {
+  id Int        @id @default(autoincrement())
+  userId Int
+  planName String
+  targetProteinIntake Float
+  isLowFat Boolean
+  includesSupplements Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model GlutenFreeDietMealPlan {
+  id Int        @id @default(autoincrement())
+  userId Int
+  planName String
+  avoidsWheat Boolean
+  includesGlutenFreeGrains Boolean
+  isDairyFree Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model IntermittentFastingMealPlan {
+  id Int        @id @default(autoincrement())
+  userId Int
+  planName String
+  fastingWindowStart String
+  fastingWindowEnd String
+  mealsPerDay Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Whole30DietMealPlan {
+  id Int        @id @default(autoincrement())
+  userId Int
+  planName String
+  excludesProcessedFoods Boolean
+  excludesSugar Boolean
+  includesWholeFoods Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model RawFoodDietMealPlan {
+  id Int        @id @default(autoincrement())
+  userId Int
+  planName String
+  includesRawVeggies Boolean
+  includesRawFruits Boolean
+  avoidsCooking Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model CleanEatingDietMealPlan {
+  id Int        @id @default(autoincrement())
+  userId Int
+  planName String
+  avoidsRefinedGrains Boolean
+  avoidsAddedSugars Boolean
+  includesWholeFoods Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model PescatarianDietMealPlan {
+  id Int        @id @default(autoincrement())
+  userId Int
+  planName String
+  includesFish Boolean
+  avoidsMeat Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model FodmapDietMealPlan {
+  id Int        @id @default(autoincrement())
+  userId Int
+  planName String
+  avoidsHighFODMAPFoods Boolean
+  includesLowFODMAPFoods Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model DiabeticDietMealPlan {
+  id Int        @id @default(autoincrement())
+  userId Int
+  planName String
+  controlsCarbs Boolean
+  focusesOnLowGlycemicIndex Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model AthleteDietMealPlan {
+  id Int        @id @default(autoincrement())
+  userId Int
+  planName String
+  highProtein Boolean
+  highCalorie Boolean
+  includesSupplements Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+

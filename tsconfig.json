@@ -1,26 +1,31 @@
 {
-    "compileOnSave": false,
-    "compilerOptions": {
-      "target": "es2017",
-      "lib": ["es2017", "esnext.asynciterable"],
-      "typeRoots": ["node_modules/@types"],
-      "allowSyntheticDefaultImports": true,
-      "experimentalDecorators": true,
-      "emitDecoratorMetadata": true,
-      "forceConsistentCasingInFileNames": true,
-      "moduleResolution": "node",
-      "module": "commonjs",
-      "pretty": true,
-      "sourceMap": true,
-      "declaration": true,
-      "outDir": "dist",
-      "allowJs": true,
-      "noEmit": false,
-      "esModuleInterop": true,
-      "resolveJsonModule": true,
-      "baseUrl": "src",
-      "strict": true
-    },
-    "include": ["src/**/*.ts"],
-    "exclude": ["node_modules"]
-  }
+  "compileOnSave": false,
+  "compilerOptions": {
+    "target": "es2017",                             // Use modern JavaScript
+    "lib": ["es2017", "esnext.asynciterable"],       // Add async iterable for async iteration
+    "typeRoots": ["node_modules/@types"],           // Default path for types
+    "allowSyntheticDefaultImports": true,           // Allow default imports for CommonJS modules
+    "experimentalDecorators": true,                 // Enable decorators for TypeScript (if used)
+    "emitDecoratorMetadata": true,                  // Emit metadata for decorators (if used)
+    "forceConsistentCasingInFileNames": true,       // Ensure file name consistency
+    "moduleResolution": "node",                     // Resolve modules like Node.js
+    "module": "ESNext",                             // Use ESNext modules for Node.js to enable ES module syntax (import/export)
+    "pretty": true,                                 // Pretty error messages
+    "sourceMap": true,                              // Enable source maps for debugging
+    "declaration": false,                           // Disable declaration files for this project
+    "outDir": "dist",                               // Output directory for compiled files
+    "allowJs": true,                                // Allow JavaScript files in the project
+    "noEmit": false,                                // Emit output files
+    "esModuleInterop": true,                        // Enable interoperability with ES Modules
+    "resolveJsonModule": true,                      // Allow importing JSON files
+    "baseUrl": "src",                               // Use `src` as the base path for imports
+    "strict": true,                                 // Enable strict type checking for safety
+    "skipLibCheck": true                            // Skip checking type definitions for libraries (can improve compilation speed)
+  },
+  "include": [
+    "src/**/*.ts"                                  // Include all TypeScript files in the `src` directory
+  ],
+  "exclude": [
+    "node_modules"                                 // Exclude `node_modules`
+  ]
+}
